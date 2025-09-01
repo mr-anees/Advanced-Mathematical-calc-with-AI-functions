@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Mathematical Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            padding: 20px;
+        }
+        
+        .calculator-container {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .calculator-header {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+        
+        .calculator-header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .calculator-header p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .calculator-body {
+            display: flex;
+            flex-direction: row;
+        }
+        
+        .calculator-main {
+            flex: 1;
+            padding: 20px;
+        }
+        
+        .calculator-display {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: right;
+            color: white;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .calculation {
+            font-size: 18px;
+            opacity: 0.8;
+            min-height: 27px;
+            word-break: break-all;
+        }
+        
+        .result {
+            font-size: 36px;
+            font-weight: 700;
+            margin-top: 10px;
+            word-break: break-all;
+        }
+        
+        .calculator-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        
+        .btn {
+            border: none;
+            border-radius: 10px;
+            padding: 16px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-number {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        .btn-operator {
+            background: rgba(255, 165, 0, 0.3);
+            color: white;
+        }
+        
+        .btn-function {
+            background: rgba(100, 149, 237, 0.4);
+            color: white;
+        }
+        
+        .btn-special {
+            background: rgba(0, 191, 255, 0.4);
+            color: white;
+        }
+        
+        .btn-ai {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            grid-column: span 2;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .calculator-sidebar {
+            width: 300px;
+            background: rgba(0, 0, 0, 0.15);
+            padding: 20px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .ai-explanation {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .ai-explanation h3 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+        }
+        
+        .explanation-content {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+            min-height: 200px;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+        
+        .math-history {
+            margin-top: 25px;
+        }
+        
+        .math-history h3 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+        }
+        
+        .history-content {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 14px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .history-item {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        @media (max-width: 768px) {
+            .calculator-body {
+                flex-direction: column;
+            }
+            
+            .calculator-sidebar {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="calculator-header">
+            <h1><i class="fas fa-calculator"></i> Advanced Math Calculator</h1>
+            <p>Perform calculations and get AI-powered explanations</p>
+        </div>
+        
+        <div class="calculator-body">
+            <div class="calculator-main">
+                <div class="calculator-display">
+                    <div class="calculation" id="calculation">2+2</div>
+                    <div class="result" id="result">4</div>
+                </div>
+                
+                <div class="calculator-buttons">
+                    <button class="btn btn-function" onclick="clearCalculator()">C</button>
+                    <button class="btn btn-function" onclick="backspace()"><i class="fas fa-backspace"></i></button>
+                    <button class="btn btn-function" onclick="appendToDisplay('%')">%</button>
+                    <button class="btn btn-operator" onclick="appendToDisplay('/')">/</button>
+                    
+                    <button class="btn btn-number" onclick="appendToDisplay('7')">7</button>
+                    <button class="btn btn-number" onclick="appendToDisplay('8')">8</button>
+                    <button class="btn btn-number" onclick="appendToDisplay('9')">9</button>
+                    <button class="btn btn-operator" onclick="appendToDisplay('*')">×</button>
+                    
+                    <button class="btn btn-number" onclick="appendToDisplay('4')">4</button>
+                    <button class="btn btn-number" onclick="appendToDisplay('5')">5</button>
+                    <button class="btn btn-number" onclick="appendToDisplay('6')">6</button>
+                    <button class="btn btn-operator" onclick="appendToDisplay('-')">-</button>
+                    
+                    <button class="btn btn-number" onclick="appendToDisplay('1')">1</button>
+                    <button class="btn btn-number" onclick="appendToDisplay('2')">2</button>
+                    <button class="btn btn-number" onclick="appendToDisplay('3')">3</button>
+                    <button class="btn btn-operator" onclick="appendToDisplay('+')">+</button>
+                    
+                    <button class="btn btn-special" onclick="appendToDisplay('Math.PI')">π</button>
+                    <button class="btn btn-number" onclick="appendToDisplay('0')">0</button>
+                    <button class="btn btn-special" onclick="appendToDisplay('.')">.</button>
+                    <button class="btn btn-operator" onclick="calculate()">=</button>
+                    
+                    <button class="btn btn-special" onclick="appendToDisplay('Math.sqrt(')">√</button>
+                    <button class="btn btn-special" onclick="appendToDisplay('**2')">x²</button>
+                    <button class="btn btn-special" onclick="appendToDisplay('**')">x^y</button>
+                    <button class="btn btn-ai" onclick="showExplanation()"><i class="fas fa-robot"></i> AI Explain</button>
+                </div>
+            </div>
+            
+            <div class="calculator-sidebar">
+                <div class="ai-explanation">
+                    <h3><i class="fas fa-lightbulb"></i> AI Explanation</h3>
+                    <div class="explanation-content" id="explanation">
+                        Click the "AI Explain" button to get an explanation of the current calculation.
+                    </div>
+                </div>
+                
+                <div class="math-history">
+                    <h3><i class="fas fa-history"></i> History</h3>
+                    <div class="history-content" id="history">
+                        <div class="history-item">2 + 2 = 4</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCalculation = '2+2';
+        let currentResult = '4';
+        let calculationHistory = ['2 + 2 = 4'];
+        
+        function updateDisplay() {
+            document.getElementById('calculation').textContent = currentCalculation;
+            document.getElementById('result').textContent = currentResult;
+        }
+        
+        function appendToDisplay(value) {
+            if (currentResult !== '') {
+                currentCalculation = '';
+                currentResult = '';
+            }
+            
+            currentCalculation += value;
+            updateDisplay();
+        }
+        
+        function calculate() {
+            try {
+                // Replace display symbols with JavaScript equivalents
+                let expression = currentCalculation
+                    .replace(/×/g, '*')
+                    .replace(/÷/g, '/')
+                    .replace(/π/g, 'Math.PI')
+                    .replace(/√/g, 'Math.sqrt');
+                
+                // Evaluate the expression safely
+                currentResult = eval(expression).toString();
+                
+                // Add to history
+                const historyEntry = `${currentCalculation} = ${currentResult}`;
+                calculationHistory.unshift(historyEntry);
+                
+                // Update history display (keep only last 5)
+                if (calculationHistory.length > 5) calculationHistory.pop();
+                document.getElementById('history').innerHTML = calculationHistory
+                    .map(item => `<div class="history-item">${item}</div>`)
+                    .join('');
+                
+            } catch (error) {
+                currentResult = 'Error';
+            }
+            updateDisplay();
+        }
+        
+        function clearCalculator() {
+            currentCalculation = '';
+            currentResult = '';
+            updateDisplay();
+        }
+        
+        function backspace() {
+            currentCalculation = currentCalculation.slice(0, -1);
+            updateDisplay();
+        }
+        
+        function showExplanation() {
+            const explanationElement = document.getElementById('explanation');
+            
+            // Simple explanations for demonstration
+            const explanations = {
+                '2+2': "Addition is the process of combining two numbers. When you add 2 and 2, you're combining two groups of two, which results in four. This is one of the basic arithmetic operations and forms the foundation for more complex mathematics.",
+                '2*2': "Multiplication is repeated addition. 2 multiplied by 2 means adding 2 to itself 2 times (2 + 2), which equals 4. It can also be visualized as a 2x2 grid, which contains 4 units.",
+                '4/2': "Division is the process of splitting a number into equal parts. When you divide 4 by 2, you're splitting 4 into 2 equal groups, with each group containing 2. Division is the inverse operation of multiplication.",
+                '2^3': "Exponentiation represents repeated multiplication. 2 raised to the power of 3 means multiplying 2 by itself 3 times (2 × 2 × 2), which equals 8. Exponents are useful for representing very large or very small numbers."
+            };
+            
+            // Get explanation or use a default one
+            let explanation = explanations[currentCalculation] || 
+                `The calculation ${currentCalculation} results in ${currentResult}. This is a mathematical operation that follows the standard rules of arithmetic.`;
+            
+            explanationElement.innerHTML = `
+                <p><strong>Calculation:</strong> ${currentCalculation}</p>
+                <p><strong>Result:</strong> ${currentResult}</p>
+                <p><strong>Explanation:</strong> ${explanation}</p>
+            `;
+        }
+        
+        // Initialize the display
+        updateDisplay();
+    </script>
+</body>
+</html>
